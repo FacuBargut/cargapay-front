@@ -1,103 +1,161 @@
-import Image from "next/image";
+'use client';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export default function LoginPage() {
+
+    const [mail, setMail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault(); // Evita que la página se recargue
+        setError(''); // Limpiamos errores previos
+    
+        try {
+          const response = await axios.post('http://localhost:3000/auth/login', {
+            mail: mail,
+            password: password, // Asegurate que los nombres coincidan con tu DTO y API
+          });
+    
+          // Si el login es exitoso...
+          const { access_token } = response.data;
+          
+          // Guardamos el token en el almacenamiento local del navegador
+          localStorage.setItem('token', access_token);
+    
+          // Redirigimos al usuario a la página de dashboard
+          router.push('/dashboard');
+    
+        } catch (err: any) {
+          // Si hay un error (ej. credenciales incorrectas)
+          console.error('Error en el login:', err);
+          const errorMessage = err.response?.data?.message || 'Error al iniciar sesión. Intentá de nuevo.';
+          setError(errorMessage);
+        }
+      };
+
+      useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          // Si encontramos un token, redirigimos al dashboard
+          router.push('/dashboard');
+        }else{
+          setLoading(false);
+        }
+      }, [router]);
+
+      if (loading) {
+        return <div className="flex h-screen items-center justify-center bg-gray-100">Cargando...</div>;
+      }
+      return (
+        <div className="min-h-screen w-full bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+            {/* Columna Izquierda: El Formulario */}
+            <div className="flex flex-col items-center justify-center p-6 sm:p-12">
+              <div className="w-full max-w-md">
+                {/* Logo y Nombre de la App */}
+                <div className="mb-8 flex items-center justify-start">
+                  <svg className="h-8 w-auto" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 0L32 16L16 32L0 16L16 0Z" fill="#1F2937" />
+                    <path d="M16 8L24 16L16 24L8 16L16 8Z" fill="white" />
+                  </svg>
+                  <span className="ml-3 text-2xl font-semibold text-gray-900">
+                    CargaPay
+                  </span>
+                </div>
+    
+                <h2 className="text-3xl font-bold text-gray-900">Iniciar Sesión</h2>
+    
+                {/* 5. Conectamos la función al formulario */}
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                  {/* Campo Email */}
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Mail
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        placeholder="tu-mail@ejemplo.com"
+                        value={mail}
+                        onChange={(e) => setMail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+    
+                  {/* Campo Contraseña */}
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Contraseña
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="current-password"
+                        required
+                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        placeholder="Contraseña"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* 6. Bloque para mostrar errores */}
+                  {error && (
+                    <div className="rounded-md bg-red-50 p-3">
+                      <p className="text-sm font-medium text-red-700">{error}</p>
+                    </div>
+                  )}
+    
+                  {/* Botón de Submit */}
+                  <div>
+                    <button
+                      type="submit"
+                      className="w-full rounded-md bg-gray-900 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                    >
+                      Entrar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+    
+            {/* Columna Derecha: El Panel de Bienvenida */}
+            <div className="hidden lg:flex flex-col items-center justify-center bg-gray-900 text-white p-12">
+              <div className="w-full max-w-md">
+                <div className="mb-10 flex justify-center">
+                  <svg className="h-24 w-auto" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 0L32 16L16 32L0 16L16 0Z" fill="#FFFFFF" />
+                    <path d="M16 8L24 16L16 24L8 16L16 8Z" fill="#1F2937" />
+                  </svg>
+                </div>
+                <h2 className="text-3xl font-bold text-center">Bienvenido a CargaPay</h2>
+                <p className="mt-4 text-center text-gray-400">
+                  La solución integral para la facturación de tu logística.
+                  Organizá tus viajes, controlá tus gastos y facturá sin complicaciones.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      );
 }
