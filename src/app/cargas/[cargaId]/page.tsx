@@ -12,7 +12,7 @@ interface Estadia { id: number; horas_estadia: number; }
 export interface Instruction { id: number; tipo: 'viaje' | 'estadia'; viaje?: Viaje; estadia?: Estadia; }
 export interface Carga {
   id: number;
-  codigo: number;
+  code: number;
   estado: 'activa' | 'finalizada';
   instructions: Instruction[];
   valor_km_recorrido: number; // <-- Asegurate de que exista
@@ -137,18 +137,18 @@ export default function CargaDetailPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Detalle de la Carga</h1>
             <div className="flex items-center space-x-4 mt-2">
-              <p className="text-lg text-gray-600">Código: <span className="font-semibold">{carga.codigo}</span></p>
+              <p className="text-lg text-gray-600">Código: <span className="font-semibold">{carga.code}</span></p>
               <span className={`rounded-full px-3 py-1 text-sm font-semibold capitalize ${carga.estado === 'activa' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                 }`}>
                 {carga.estado}
               </span>
             </div>
           </div>
-          {carga.estado === 'activa' && (
+          {/* {carga.estado === 'activa' && (
             <button onClick={handleFinalizarClick} className="mt-4 sm:mt-0 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
               Finalizar Carga
             </button>
-          )}
+          )} */}
         </header>
 
         {carga.estado === 'activa' ? (

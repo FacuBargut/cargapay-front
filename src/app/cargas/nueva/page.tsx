@@ -44,14 +44,6 @@ function NuevaCargaPage() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar (Simplificado) */}
-      <aside className="hidden w-64 bg-gray-800 p-4 text-white md:block">
-        <h1 className="text-2xl font-bold">CargaPay</h1>
-        <nav className="mt-8">
-            <Link href="/dashboard" className="block rounded-md py-2 px-3 hover:bg-gray-700">Dashboard</Link>
-            <Link href="/cargas" className="block rounded-md bg-gray-900 py-2 px-3">Cargas</Link>
-        </nav>
-      </aside>
 
       {/* Área de Contenido */}
       <main className="flex-1 overflow-y-auto p-6 lg:p-10">

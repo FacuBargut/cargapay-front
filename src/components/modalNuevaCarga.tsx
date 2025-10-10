@@ -11,8 +11,9 @@ interface ModalProps {
 
 export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: ModalProps) {
     const [codigo, setCodigo] = useState('');
-    const [valorKm, setValorKm] = useState(''); // <-- Nuevo estado
-    const [valorHora, setValorHora] = useState(''); // <-- Nuevo estado
+    const [valorKm, setValorKm] = useState('');
+    const [valorHora, setValorHora] = useState('');
+    const [cantidadBocas, setCantidadBocas] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -23,6 +24,7 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
             setValorKm('');
             setValorHora('');
             setError('');
+            setCantidadBocas('')
         }
     }, [isOpen]);
 
@@ -35,7 +37,8 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
             await api.post('/cargas', { 
                 code: Number(codigo),
                 valor_km_recorrido: Number(valorKm), // <-- Nuevo dato
-                valor_hora_estadia: Number(valorHora),   // <-- Nuevo dato
+                valor_hora_estadia: Number(valorHora),
+                cantidad_bocas: Number(valorHora),   // <-- Nuevo dato
             });
             onCargaCreada();
             onClose();
@@ -70,6 +73,12 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
                     <div>
                         <label htmlFor="valorHora" className="block text-sm font-medium text-gray-700">Valor por Hora de Estadía</label>
                         <input id="valorHora" type="number" step="0.01" placeholder="Ej: 2500.00" required className="mt-1 w-full rounded-md border-gray-300 shadow-sm" value={valorHora} onChange={(e) => setValorHora(e.target.value)} />
+                    </div>
+
+                    {/* Input Bocas */}
+                    <div>
+                        <label htmlFor="bocas" className="block text-sm font-medium text-gray-700">Cantidad bocas</label>
+                        <input id="valorBoca" type="number" placeholder="Ej: 3" required className="mt-1 w-full rounded-md border-gray-300 shadow-sm" value={cantidadBocas} onChange={(e) => setCantidadBocas(e.target.value)} />
                     </div>
                     
                     {error && <p className="text-sm text-red-600">{error}</p>}

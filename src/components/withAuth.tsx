@@ -12,7 +12,7 @@ const withAuth = (WrappedComponent: React.ComponentType) => {
     useEffect(() => {
       const token = localStorage.getItem('token');
       if (!token) {
-        router.replace('/login');
+        router.replace('/');
       } else {
         setIsLoading(false);
       }
