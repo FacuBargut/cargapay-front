@@ -138,7 +138,7 @@ function CargasPage() {
         <Layout>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-3xl font-bold text-gray-900">Gestión de Cargas</h2>
-            <button onClick={() => setIsModalOpen(true)} className="mt-4 sm:mt-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+            <button onClick={() => setIsModalOpen(true)} className="cursor-pointer mt-4 sm:mt-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
               + Nueva Carga
             </button>
           </div>
@@ -153,7 +153,7 @@ function CargasPage() {
             ) : (
               Object.keys(groupedCargas).map(monthKey => (
                 <div key={monthKey} className="overflow-hidden rounded-lg bg-white shadow">
-                  <button onClick={() => toggleMonth(monthKey)} className="flex w-full items-center justify-between p-4 text-left font-semibold text-gray-800 hover:bg-gray-50 focus:outline-none">
+                  <button onClick={() => toggleMonth(monthKey)} className="cursor-pointer flex w-full items-center justify-between p-4 text-left font-semibold text-gray-800 hover:bg-gray-50 focus:outline-none">
                     <span className="capitalize">{monthKey}</span>
                     <svg className={`h-5 w-5 transform transition-transform ${openMonth === monthKey ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -176,7 +176,7 @@ function CargasPage() {
                                   return (
                                     <button
                                       onClick={() => handleFacturarClick(monthKey, quincena)}
-                                      className="rounded-md bg-green-600 p-2.5 text-xs font-semibold text-white shadow-sm hover:bg-green-700"
+                                      className="cursor-pointer rounded-md bg-green-600 p-2.5 text-xs font-semibold text-white shadow-sm hover:bg-green-700"
                                     >
                                       Facturar Quincena ({cargasActivasCount})
                                     </button>
@@ -188,7 +188,7 @@ function CargasPage() {
                                   return (
                                     <Link href={`/facturas/${primeraCargaFacturada.factura?.id}`}>
                                       <button
-                                        className="rounded-md bg-gray-700 p-2.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-600"
+                                        className="cursor-pointer rounded-md bg-gray-700 p-2.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-600"
                                       >
                                         Ver Factura
                                       </button>

@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import withAuth from '@/components/withAuth';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Layout from '@/components/Layout';
 // Asumimos que tenés un componente ModalTarifa y ConfirmationModal
@@ -21,7 +20,7 @@ function TarifasPage() {
     <Layout>
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold text-gray-900">Gestión de Tarifas</h2>
-          <button className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+          <button className="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
             + Agregar Tarifa
           </button>
         </div>
@@ -44,8 +43,8 @@ function TarifasPage() {
                       ${tarifa.valor.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium space-x-4">
-                      <button className="text-indigo-600 hover:text-indigo-900">Editar</button>
-                      <button className="text-red-600 hover:text-red-900">Eliminar</button>
+                      <button className="cursor-pointer text-indigo-600 hover:text-indigo-900">Editar</button>
+                      <button className="cursor-pointer text-red-600 hover:text-red-900">Eliminar</button>
                     </td>
                   </tr>
                 ))}

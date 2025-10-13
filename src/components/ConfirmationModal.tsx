@@ -19,10 +19,10 @@ export default function ConfirmationModal({ isOpen, title, message, onConfirm, o
         <h2 className="text-xl font-bold text-gray-900">{title}</h2>
         <p className="mt-2 text-sm text-gray-600">{message}</p>
         <div className="mt-6 flex justify-end space-x-4">
-          <button onClick={onCancel} className="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          <button onClick={onCancel} className="cursor-pointer rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
             {cancelText}
           </button>
-          <button onClick={onConfirm} className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700">
+          <button onClick={onConfirm} className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700">
             {confirmText}
           </button>
         </div>

@@ -155,7 +155,7 @@ export default function CargaDetailPage() {
           <div className="rounded-lg bg-white p-6 shadow-lg">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-800">Instrucciones Registradas</h2>
-              <button onClick={handleAddClick} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+              <button onClick={handleAddClick} className="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
                 + Agregar Instrucción
               </button>
             </div>
@@ -180,8 +180,8 @@ export default function CargaDetailPage() {
                       )}
                     </div>
                     <div className="flex space-x-4">
-                      <button onClick={() => handleEditClick(inst)} className="text-sm font-medium text-blue-600 hover:underline">Editar</button>
-                      <button onClick={() => handleDeleteClick(inst.id)} className="text-sm font-medium text-red-600 hover:underline">Eliminar</button>
+                      <button onClick={() => handleEditClick(inst)} className="cursor-pointer text-sm font-medium text-blue-600 hover:underline">Editar</button>
+                      <button onClick={() => handleDeleteClick(inst.id)} className="cursor-pointer text-sm font-medium text-red-600 hover:underline">Eliminar</button>
                     </div>
                   </div>
                 ))

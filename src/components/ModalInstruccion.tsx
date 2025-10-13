@@ -11,7 +11,7 @@ const Switch = ({ label, enabled, setEnabled }: { label: string, enabled: boolea
     <button
       type="button"
       onClick={() => setEnabled(!enabled)}
-      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${enabled ? 'bg-indigo-600' : 'bg-gray-200'}`}
+      className={`cursor-pointer relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${enabled ? 'bg-indigo-600' : 'bg-gray-200'}`}
     >
       <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${enabled ? 'translate-x-5' : 'translate-x-0'}`} />
     </button>
@@ -123,8 +123,8 @@ export default function ModalInstruccion({ isOpen, onClose, onSave, cargaId, ins
               <div>
                 <label className="text-sm font-medium text-gray-700">Tipo de Entrega</label>
                 <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1">
-                  <button type="button" onClick={() => setViajeData({ ...viajeData, tipo: 'caja' })} className={`rounded-md py-1 text-sm font-semibold ${viajeData.tipo === 'caja' ? 'bg-white text-indigo-600 shadow' : 'text-gray-600'}`}>Caja</button>
-                  <button type="button" onClick={() => setViajeData({ ...viajeData, tipo: 'colgado' })} className={`rounded-md py-1 text-sm font-semibold ${viajeData.tipo === 'colgado' ? 'bg-white text-indigo-600 shadow' : 'text-gray-600'}`}>Colgado</button>
+                  <button type="button" onClick={() => setViajeData({ ...viajeData, tipo: 'caja' })} className={`cursor-pointer rounded-md py-1 text-sm font-semibold ${viajeData.tipo === 'caja' ? 'bg-white text-indigo-600 shadow' : 'text-gray-600'}`}>Caja</button>
+                  <button type="button" onClick={() => setViajeData({ ...viajeData, tipo: 'colgado' })} className={`cursor-pointer rounded-md py-1 text-sm font-semibold ${viajeData.tipo === 'colgado' ? 'bg-white text-indigo-600 shadow' : 'text-gray-600'}`}>Colgado</button>
                 </div>
               </div>
             </div>
@@ -141,8 +141,8 @@ export default function ModalInstruccion({ isOpen, onClose, onSave, cargaId, ins
 
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex justify-end space-x-4 pt-4">
-            <button type="button" onClick={onClose} className="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancelar</button>
-            <button type="submit" disabled={loading} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50">{loading ? 'Guardando...' : 'Guardar'}</button>
+            <button type="button" onClick={onClose} className="cursor-pointer rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancelar</button>
+            <button type="submit" disabled={loading} className="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50">{loading ? 'Guardando...' : 'Guardar'}</button>
           </div>
         </form>
       </div>

@@ -97,7 +97,7 @@ function DashboardPage() {
           <div className="mt-4 flex space-x-2 sm:mt-0">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+              className="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
             >
               + Nueva Carga
             </button>

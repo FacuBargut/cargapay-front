@@ -83,8 +83,8 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
                     
                     {error && <p className="text-sm text-red-600">{error}</p>}
                     <div className="flex items-center justify-end space-x-4 pt-4">
-                        <button type="button" onClick={onClose} className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancelar</button>
-                        <button type="submit" disabled={loading} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50">
+                        <button type="button" onClick={onClose} className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancelar</button>
+                        <button type="submit" disabled={loading} className="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50">
                             {loading ? 'Guardando...' : 'Guardar Carga'}
                         </button>
                     </div>
