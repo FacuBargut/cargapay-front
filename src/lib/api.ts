@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Creamos una instancia de Axios con la URL base de tu API
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
 
 // Interceptor para las peticiones

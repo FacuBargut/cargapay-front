@@ -33,7 +33,7 @@ function FacturaDetailPage() {
                 }
 
                 // 2. Usás await dentro de esta nueva función
-                const response = await api.get(`http://localhost:3000/facturacion/${facturaId}`);
+                const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/facturacion/${facturaId}`);
                 setFactura(response.data);
 
             } catch (err) {

@@ -17,7 +17,7 @@ export default function LoginPage() {
         setError(''); // Limpiamos errores previos
     
         try {
-          const response = await axios.post('http://localhost:3000/auth/login', {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             mail: mail,
             password: password, // Asegurate que los nombres coincidan con tu DTO y API
           });

@@ -47,7 +47,7 @@ function CargasPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/cargas', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/cargas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCargas(response.data);
@@ -113,7 +113,7 @@ function CargasPage() {
 
 
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3000/facturacion/quincena', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/facturacion/quincena`, {
         monthYear, quincena,
       },
         {

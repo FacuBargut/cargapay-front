@@ -22,7 +22,7 @@ function NuevaCargaPage() {
       if (!token) throw new Error('Token no encontrado');
 
       await axios.post(
-        'http://localhost:3000/cargas',
+        `${process.env.NEXT_PUBLIC_API_URL}/cargas`,
         {
           codigo: Number(codigo), // Nos aseguramos de enviar un número
         },
