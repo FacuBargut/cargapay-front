@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import ModalNuevaCarga from '@/components/modalNuevaCarga';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import Layout from '@/components/Layout';
+import api from '@/lib/api';
 
 // 1. La interfaz debe tener los campos para agrupar y mostrar
 interface Carga {
@@ -85,11 +86,6 @@ function CargasPage() {
     }, {});
   }, [cargas]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    router.push('/');
-  };
-
   const toggleMonth = (monthKey: string) => {
     setOpenMonth(openMonth === monthKey ? null : monthKey);
   };
@@ -110,28 +106,22 @@ function CargasPage() {
 
   const facturarQuincena = async (monthYear: string, quincena: string) => {
     try {
+        const response = await api.post('/facturacion/quincena', { monthYear, quincena });
+        const nuevaFactura = response.data; // La API devuelve la factura creada
 
-
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/facturacion/quincena`, {
-        monthYear, quincena,
-      },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+        // --- ¡CAMBIO CLAVE AQUÍ! ---
+        if (nuevaFactura && nuevaFactura.id) {
+            // Abrimos la URL del detalle de la factura en una nueva pestaña
+            window.open(`/facturas/${nuevaFactura.id}`, '_blank');
         }
-      );
-
-      const nuevaFactura = response.data;
-
-      router.push(`/facturas/${nuevaFactura.id}`)
-
-      // fetchCargas(); // Recargamos la lista para ver los cambios
+        
+        fetchCargas(); // Recargamos la lista de cargas en la página original
     } catch (err: any) {
-      console.error("Error al facturar la quincena:", err);
-      // Aquí podrías usar un estado para mostrar un error al usuario
+        console.error("Error al facturar la quincena:", err);
+        // Aquí podrías mostrar el error al usuario en un toast o alerta
     }
     closeConfirmation();
-  };
+};
 
   return (
     <>
@@ -186,7 +176,8 @@ function CargasPage() {
                                 const primeraCargaFacturada = quincenaCargas?.find(c => c.estado === 'finalizada' && c.factura?.id);
                                 if (primeraCargaFacturada) {
                                   return (
-                                    <Link href={`/facturas/${primeraCargaFacturada.factura?.id}`}>
+                                    <Link href={`/facturas/${primeraCargaFacturada.factura?.id}`}
+                                    target="_blank">
                                       <button
                                         className="cursor-pointer rounded-md bg-gray-700 p-2.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-600"
                                       >
