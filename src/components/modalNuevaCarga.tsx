@@ -8,7 +8,10 @@ interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onCargaCreada: () => void;
-}
+    
+}const getTodayString = () => {
+    return new Date().toISOString().split('T')[0];
+  };
 
 export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: ModalProps) {
     const [codigo, setCodigo] = useState('');
@@ -16,6 +19,7 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
     const [missingTarifas, setMissingTarifas] = useState<string[]>([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [fechaCarga, setFechaCarga] = useState(getTodayString()); // Nuevo estado para la fecha
 
     useEffect(() => {
         if (isOpen) {
@@ -36,6 +40,7 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
             await api.post('/cargas', {
                 code: Number(codigo),
                 cantidad_bocas: Number(cantidadBocas),
+                fecha_creacion: fechaCarga
             });
             onCargaCreada();
             onClose();
@@ -45,6 +50,8 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
             if (err.response?.status === 412) {
                 setError(err.response.data.message || 'Faltan tarifas por configurar.');
                 setMissingTarifas(err.response.data.missing || []);
+            }else if(err.response?.status === 409){
+                setError(err.response.data.message || 'Ya existe una carga con el mismo código.');
             } else {
                 setError(err.response?.data?.message || 'Error al crear la carga.');
             }
@@ -60,6 +67,18 @@ export default function ModalNuevaCarga({ isOpen, onClose, onCargaCreada }: Moda
             <div className="w-full max-w-lg rounded-lg bg-white p-8 shadow-lg">
                 <h2 className="text-2xl font-bold text-gray-900">Crear Nueva Carga</h2>
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+
+                <div>
+                        <label htmlFor="fecha" className="block text-sm font-medium text-gray-700">Fecha de la Carga</label>
+                        <input
+                          id="fecha"
+                          type="date"
+                          required
+                          className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          value={fechaCarga}
+                          onChange={(e) => setFechaCarga(e.target.value)}
+                        />
+                    </div>
                     <div>
                         <label htmlFor="codigo" className="block text-sm font-medium text-gray-700">Código de Carga</label>
                         <input placeholder="Ejemplo: 123456" id="codigo" type="number" required className="mt-1 w-full rounded-md border-gray-300 shadow-sm" value={codigo} onChange={(e) => setCodigo(e.target.value)} />
