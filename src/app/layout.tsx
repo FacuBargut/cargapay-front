@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'CargaPay',
   description: 'Sistema de facturación para logística',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -16,7 +17,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={inter.className}>{children}</body>
+      <head>
+        {/* Agregamos el theme-color para la barra del navegador en mobile */}
+        <meta name="theme-color" content="#111827" />
+      </head>
+      <body>{children}</body>
+      {/* <body className={inter.className}>{children}</body> */}
     </html>
   );
 }
