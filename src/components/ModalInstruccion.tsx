@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { Instruction } from '@/app/cargas/[cargaId]/page';
- // Usamos los tipos centralizados
+// Usamos los tipos centralizados
 
 // --- Componente Switch reutilizable ---
 const Switch = ({ label, enabled, setEnabled }: { label: string, enabled: boolean, setEnabled: (enabled: boolean) => void }) => (
@@ -19,7 +19,7 @@ const Switch = ({ label, enabled, setEnabled }: { label: string, enabled: boolea
 );
 // --- Fin del Componente Switch ---
 
-interface ViajeData { localidad_destino: string; cant_km: string; changarin: boolean; tipo: 'caja' | 'colgado'; }
+interface ViajeData { localidad_destino: string; cant_km: string; tipo: string[]; }
 interface EstadiaData { horas_estadia: string; }
 interface ModalProps {
   isOpen: boolean;
@@ -31,11 +31,11 @@ interface ModalProps {
 
 export default function ModalInstruccion({ isOpen, onClose, onSave, cargaId, instructionToEdit }: ModalProps) {
   const [tipo, setTipo] = useState<'viaje' | 'estadia'>('viaje');
-  const [viajeData, setViajeData] = useState<ViajeData>({ localidad_destino: '', cant_km: '', changarin: false, tipo: 'caja' });
+  const [viajeData, setViajeData] = useState<ViajeData>({ localidad_destino: '', cant_km: '', tipo: ['caja'] });
   const [estadiaData, setEstadiaData] = useState<EstadiaData>({ horas_estadia: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const isEditing = !!instructionToEdit;
   // 1. useEffect para rellenar el formulario en modo edición o resetearlo
   useEffect(() => {
     if (isOpen) {
@@ -45,21 +45,28 @@ export default function ModalInstruccion({ isOpen, onClose, onSave, cargaId, ins
           setViajeData({
             localidad_destino: instructionToEdit.viaje.localidad_destino,
             cant_km: String(instructionToEdit.viaje.cant_km),
-            changarin: instructionToEdit.viaje.changarin,
-            tipo: instructionToEdit.viaje.tipo as 'caja' | 'colgado',
+            tipo: Array.isArray(instructionToEdit.viaje.tipo) ? instructionToEdit.viaje.tipo : [instructionToEdit.viaje.tipo],
           });
         } else if (instructionToEdit.tipo === 'estadia' && instructionToEdit.estadia) {
           setEstadiaData({ horas_estadia: String(instructionToEdit.estadia.horas_estadia) });
         }
       } else { // Modo Creación
         setTipo('viaje');
-        setViajeData({ localidad_destino: '', cant_km: '', changarin: false, tipo: 'caja' });
+        setViajeData({ localidad_destino: '', cant_km: '', tipo: ['caja'] });
         setEstadiaData({ horas_estadia: '' });
       }
     }
   }, [isOpen, instructionToEdit]);
 
-  // 2. Lógica de guardado dinámica (POST o PATCH)
+
+  const handleTipoChange = (value: 'caja' | 'colgado') => {
+    const currentTipos = viajeData.tipo;
+    const newTipos = currentTipos.includes(value)
+      ? currentTipos.filter(t => t !== value) // Si ya está, lo quitamos
+      : [...currentTipos, value]; // Si no está, lo agregamos
+    setViajeData({ ...viajeData, tipo: newTipos });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -80,7 +87,7 @@ export default function ModalInstruccion({ isOpen, onClose, onSave, cargaId, ins
       } else {
         await api.post('/instructions', payload);
       }
-      onSave(); // Llama a la función para refrescar y cerrar
+      onSave();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al guardar la instrucción');
     } finally {
@@ -119,12 +126,34 @@ export default function ModalInstruccion({ isOpen, onClose, onSave, cargaId, ins
                 <label htmlFor="km" className="text-sm font-medium text-gray-700">Cantidad de KM</label>
                 <input id="km" type="number" step="0.1" placeholder="Ej: 300.5" required className="mt-1 w-full rounded-md border-gray-300 shadow-sm" value={viajeData.cant_km} onChange={(e) => setViajeData({ ...viajeData, cant_km: e.target.value })} />
               </div>
-              <Switch label="¿Tiene changarín?" enabled={viajeData.changarin} setEnabled={(enabled) => setViajeData({ ...viajeData, changarin: enabled })} />
+              {/* <Switch label="¿Tiene changarín?" enabled={viajeData.changarin} setEnabled={(enabled) => setViajeData({ ...viajeData, changarin: enabled })} /> */}
               <div>
                 <label className="text-sm font-medium text-gray-700">Tipo de Entrega</label>
-                <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1">
-                  <button type="button" onClick={() => setViajeData({ ...viajeData, tipo: 'caja' })} className={`cursor-pointer rounded-md py-1 text-sm font-semibold ${viajeData.tipo === 'caja' ? 'bg-white text-indigo-600 shadow' : 'text-gray-600'}`}>Caja</button>
-                  <button type="button" onClick={() => setViajeData({ ...viajeData, tipo: 'colgado' })} className={`cursor-pointer rounded-md py-1 text-sm font-semibold ${viajeData.tipo === 'colgado' ? 'bg-white text-indigo-600 shadow' : 'text-gray-600'}`}>Colgado</button>
+                <div className="mt-2 space-y-2">
+                  <div className="relative flex items-start">
+                    <div className="flex h-6 items-center">
+                      <input id="tipo-caja" type="checkbox"
+                        checked={viajeData.tipo.includes('caja')}
+                        onChange={() => handleTipoChange('caja')}
+                        className="cursor-pointer h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                    </div>
+                    <div className="ml-3 text-sm leading-6">
+                      <label htmlFor="tipo-caja" className="cursor-pointer font-medium text-gray-900">Caja</label>
+                    </div>
+                  </div>
+                  <div className="relative flex items-start">
+                    <div className="flex h-6 items-center">
+                      <input id="tipo-colgado" type="checkbox"
+                        checked={viajeData.tipo.includes('colgado')}
+                        onChange={() => handleTipoChange('colgado')}
+                        className="h-4 w-4 cursor-pointer rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                    </div>
+                    <div className="ml-3 text-sm leading-6">
+                      <label htmlFor="tipo-colgado" className="cursor-pointer font-medium text-gray-900">Colgado</label>
+                    </div>
+                  </div>
+
+                  
                 </div>
               </div>
             </div>

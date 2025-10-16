@@ -116,7 +116,6 @@ function CargasPage() {
   };
 
   const handleDeleteFacturaClick = (facturaId: number) => {
-    console.log("CLICK EN ELIMINAR FACTURA. ID:", facturaId);
     setConfirmation({
       isOpen: true,
       title: 'Eliminar Factura',

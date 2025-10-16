@@ -19,6 +19,8 @@ export interface Carga {
   estado: 'activa' | 'finalizada';
   instructions: Instruction[];
   cantidad_bocas: number;
+  fecha_creacion: string;
+  factura?: { id: number };
 }
 
 function CargaDetailPage() {
@@ -60,8 +62,11 @@ function CargaDetailPage() {
     if (cargaId) fetchData();
   }, [cargaId]);
 
-  const { totalKm, totalHorasEstadia, montoViajes, montoEstadias, montoBocas, montoTotal, valorKmPromedio, valorHoraPromedio } = useMemo(() => {
-    if (!carga) {
+  const {
+    totalKm, totalHorasEstadia,
+    montoViajes, montoEstadias, montoBocas, montoTotal
+  } = useMemo(() => {
+    if (!carga || tarifas.length === 0) {
       return { totalKm: 0, totalHorasEstadia: 0, montoViajes: 0, montoEstadias: 0, montoBocas: 0, montoTotal: 0 };
     }
 
@@ -81,18 +86,24 @@ function CargaDetailPage() {
       }
     });
 
-    const valorKmPromedio = totalKm > 0 ? montoViajes / totalKm : 0;
-    const valorHoraPromedio = totalHorasEstadia > 0 ? montoEstadias / totalHorasEstadia : 0;
+    // --- LÓGICA NUEVA PARA BONO POR BOCAS ---
+    let montoBocas = 0;
+    // Buscamos la tarifa escalonada para "Costo por boca"
+    const tarifaBoca = tarifas.find(t => t.name === "Costo por boca");
 
-    
-
-    // El costo por boca sí se calcula en vivo con la tarifa actual
-    const valorBoca = tarifas.find(t => t.name === "Costo por boca")?.value || 0;
-    const montoBocas = carga.cantidad_bocas * valorBoca;
+    if (tarifaBoca && tarifaBoca.configuracion_escalonada?.niveles) {
+      // Recorremos los niveles para encontrar el que corresponde
+      for (const nivel of tarifaBoca.configuracion_escalonada.niveles) {
+        if (carga.cantidad_bocas >= nivel.desde && carga.cantidad_bocas <= nivel.hasta) {
+          montoBocas = Number(nivel.monto); // Asignamos el bono fijo
+          break; // Salimos del bucle al encontrar el rango
+        }
+      }
+    }
 
     const montoTotal = montoViajes + montoEstadias + montoBocas;
 
-    return { totalKm, totalHorasEstadia, montoViajes, montoEstadias, montoBocas, montoTotal, valorKmPromedio, valorHoraPromedio };
+    return { totalKm, totalHorasEstadia, montoViajes, montoEstadias, montoBocas, montoTotal };
   }, [carga, tarifas]);
 
   const handleFinalizarClick = () => {
@@ -179,8 +190,15 @@ function CargaDetailPage() {
                         <ul className="mt-2 list-inside list-disc text-sm text-gray-700">
                           <li><strong>Destino:</strong> {inst.viaje.localidad_destino}</li>
                           <li><strong>KM:</strong> {inst.viaje.cant_km}</li>
-                          <li><strong>Changarin:</strong> {inst.viaje.changarin ? 'Si' : 'No'}</li>
-                          <li><strong>Tipo:</strong> {inst.viaje.tipo}</li>
+                          {/* El campo 'changarin' ya no se usa, lo podemos quitar */}
+                          <li>
+                            <strong>Tipo: </strong>
+                            {/* This code now handles both arrays and single strings */}
+                            {(Array.isArray(inst.viaje.tipo) ? inst.viaje.tipo : [inst.viaje.tipo])
+                              .sort()
+                              .map(t => t.charAt(0).toUpperCase() + t.slice(1))
+                              .join(' y ')}
+                          </li>
                         </ul>
                       )}
                       {inst.tipo === 'estadia' && inst.estadia && (
@@ -222,8 +240,8 @@ function CargaDetailPage() {
                   <div>
                     <p className="text-gray-600">Subtotal Viajes ({totalKm.toLocaleString('es-AR')} km)</p>
                     <p className="text-sm text-gray-400">
-                    Valor por km recorrido
-                    ${valorKmPromedio?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                      Valor por km recorrido
+                      ${montoViajes.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
                   <span className="font-semibold text-gray-800">${montoViajes.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
@@ -232,10 +250,10 @@ function CargaDetailPage() {
                 {/* Fila para Estadías */}
                 <div className="flex justify-between text-base">
                   <div>
-                    <p className="text-gray-600">Subtotal Estadias ({totalKm.toLocaleString('es-AR')} km)</p>
+                    <p className="text-gray-600">Subtotal Estadias ({totalHorasEstadia.toLocaleString('es-AR')} hs)</p>
                     <p className="text-sm text-gray-400">
                       Valor por hora de estadia
-                    ${valorHoraPromedio?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                      ${montoEstadias.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
                   <span className="font-semibold text-gray-800">${montoEstadias.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
@@ -243,10 +261,13 @@ function CargaDetailPage() {
 
                 {/* Fila para Bocas */}
                 <div className="flex justify-between text-base">
-                  <p className="text-gray-600">Subtotal Bocas ({carga.cantidad_bocas})</p>
-                  <span className="font-semibold text-gray-800">
-                    ${montoBocas.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                  </span>
+                  <div>
+                    <p className="text-gray-600">Subtotal Bocas ({carga.cantidad_bocas})</p>
+                    <p className="text-sm text-gray-400">
+                      Costo por Boca: ${montoBocas.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                  <span className="font-semibold text-gray-800">${montoBocas.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
                 </div>
               </div>
 

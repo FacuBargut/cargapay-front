@@ -14,7 +14,7 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    router.push('/'); // Redirige al login
+    router.push('/');
   };
 
   const navLinks = [
@@ -24,10 +24,9 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
   ];
 
   return (
-    <>
-      {/* 2. El sidebar principal con clases condicionales para el responsive */}
+    <>     
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 flex-shrink-0 transform flex-col bg-gray-800 p-4 text-white transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 flex flex-col flex-shrink-0 transform flex-col bg-gray-800 p-4 text-white transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -38,7 +37,7 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={toggle} // Cierra el menú al hacer clic en un enlace en móvil
+                onClick={toggle}
                 className={`block rounded-md py-2 px-3 hover:bg-gray-700 ${
                   pathname === link.href ? 'bg-gray-900' : ''
                 }`}
@@ -58,7 +57,6 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
         </div>
       </aside>
 
-      {/* 3. Overlay para oscurecer el fondo en móvil cuando el menú está abierto */}
       {isOpen && (
         <div
           className="fixed inset-0 z-20 bg-black opacity-50 md:hidden"
